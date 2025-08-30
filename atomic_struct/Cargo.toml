@@ -1,0 +1,18 @@
+[package]
+name = "atomic_struct"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Proc-macro crate to derive atomic struct with Arc<tokio::Mutex<T>> fields"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+syn = { version = "2", features = ["full"] }
+quote = "1"
+atomic_struct_core = { path = "../atomic_struct_core" }  # Core-Crate
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
