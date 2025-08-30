@@ -1,4 +1,6 @@
+#[derive(Debug)]
 pub struct AtomicMember<T>(std::sync::Arc<tokio::sync::Mutex<T>>);
+
 
 impl<T> Clone for AtomicMember<T> {
     fn clone(&self) -> Self {
@@ -10,6 +12,14 @@ impl<T> AtomicMember<T> {
         AtomicMember(std::sync::Arc::new(tokio::sync::Mutex::new(value)))
     }
 }
+
+impl<T> Default for AtomicMember<T>
+where T: Default{
+    fn default() -> Self {
+        AtomicMember::new(T::default())
+    }
+}
+
 
 impl<T> AtomicMember<T> 
 where T: Clone

@@ -3,3 +3,4 @@ members = [
     "atomic_struct",
     "atomic_struct_core"
 ]
+resolver = "3"
