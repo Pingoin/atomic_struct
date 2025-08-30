@@ -19,7 +19,7 @@ proc-macro = true
 proc-macro2 = "1"
 syn = { version = "2", features = ["full"] }
 quote = "1"
-atomic_struct_core = { path = "../atomic_struct_core" }  # Core-Crate
+atomic_struct_core = { version="0.1.0",path = "../atomic_struct_core" }  # Core-Crate
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
