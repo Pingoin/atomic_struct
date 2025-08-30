@@ -1,5 +1,9 @@
+use std::sync::Arc;
+
+use tokio::sync::Mutex;
+
 #[derive(Debug)]
-pub struct AtomicMember<T>(std::sync::Arc<tokio::sync::Mutex<T>>);
+pub struct AtomicMember<T>(Arc<Mutex<T>>);
 
 
 impl<T> Clone for AtomicMember<T> {
@@ -9,7 +13,7 @@ impl<T> Clone for AtomicMember<T> {
 }
 impl<T> AtomicMember<T> {
     pub fn new(value: T) -> Self {
-        AtomicMember(std::sync::Arc::new(tokio::sync::Mutex::new(value)))
+        AtomicMember(Arc::new(Mutex::new(value)))
     }
 }
 
