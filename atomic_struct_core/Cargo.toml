@@ -2,6 +2,22 @@
 name = "atomic_struct_core"
 version = "0.1.0"
 edition = "2021"
+authors = ["Pingoin <pingoin@pingoin.eu>"]
+description = "Core library for atomic_struct procedural macro"
+license = "MIT"
+repository = "https://github.com/Pingoin/atomic_struct"
+homepage = "https://github.com/Pingoin/atomic_struct"
+documentation = "https://docs.rs/atomic_struct_core"
+readme = "README.md"
+keywords = ["atomic", "struct", "rust", "concurrency"]
+categories = ["concurrency", "data-structures"]
+
 
 [dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+serde = { version = "1.0", features = [], optional = true }
+
+
+[features]
+default = []
+serde = ["dep:serde"]
