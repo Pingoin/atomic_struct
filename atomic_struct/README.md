@@ -2,16 +2,14 @@
 
 `atomic_struct` is a Rust proc-macro that allows you to create **structs with atomic, asynchronous fields**. Each field is automatically wrapped in an `AtomicMember<T>` (`Arc<Mutex<T>`), providing **thread-safe async access** to individual fields.
 
+All fields become private members of the stuct. Each field gets a getter and a setter method with the provided visibility.
+
 ---
 
 ## Features
 
-- `#[atomic_struct]` attribute macro for easy struct creation  
-- Each field is wrapped in `AtomicMember<T>`  
-- Automatically generated `new()` constructor  
-- Async getter/setter for each field  
-- Cloneable atomic fields  
-- Optional: Serde field attributes are preserved (`#[serde(...)]`)  
+- serde: activates serde compatibility fot the atomic-struct
+  - fields are serilized without any mutex overhead
 
 ---
 
@@ -21,17 +19,62 @@ Add the crate to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-atomic_struct = { path = "../atomic_struct" }  # or crates.io version when published
+atomic_struct = { version="0.1.1" }
+atomic_struct_core = { version="0.1.1" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 ```
 
 ## Examples
 
+``` rust
+#[atomic_struct]
+pub struct AppState {
+    /// a public counter
+    pub counter: i32,
+    pub(crate) name: String,
+} 
+```
+
+ist expanded to:
+
+``` rust
+pub struct AppState {
+    /// a public counter
+    counter: atomic_struct_core::AtomicMember<i32>,
+    name: atomic_struct_core::AtomicMember<String>,
+}
+
+impl AppState {
+    pub fn new(counter: i32, name: String) -> Self {
+        Self {
+            counter: atomic_struct_core::AtomicMember::new(counter),
+            name: atomic_struct_core::AtomicMember::new(name),
+        }
+    }
+    /// a public counter
+    pub async fn get_counter(&self) -> i32 {
+        self.counter.get().await
+    }
+    /// a public counter
+    pub async fn set_counter(&self, new_val: i32) {
+        self.counter.set(new_val).await
+    }
+    pub(crate) async fn get_name(&self) -> String {
+        self.name.get().await
+    }
+    pub(crate) async fn set_name(&self, new_val: String) {
+        self.name.set(new_val).await
+    }
+}
+```
+
+how to use:
+
 ```rust
 use atomic_struct::atomic_struct;
 
 #[atomic_struct]
-struct AppState {
+pub struct AppState {
     counter: i32,
     name: String,
 }

@@ -1,17 +1,15 @@
-# atomic_struct
+# atomic_struct_core
 
-`atomic_struct` is a Rust proc-macro that allows you to create **structs with atomic, asynchronous fields**. Each field is automatically wrapped in an `AtomicMember<T>` (`Arc<Mutex<T>`), providing **thread-safe async access** to individual fields.
+`atomic_struct_core` provides the types used by the atomic_struct macros.
+
+- `AtomicMember<T>` wraps the type `T` in `Arc<tokio::sync::Mutex<T>>` and adds methods to change the inner Value.
 
 ---
 
 ## Features
 
-- `#[atomic_struct]` attribute macro for easy struct creation  
-- Each field is wrapped in `AtomicMember<T>`  
-- Automatically generated `new()` constructor  
-- Async getter/setter for each field  
-- Cloneable atomic fields  
-- Optional: Serde field attributes are preserved (`#[serde(...)]`)  
+- serde: activates serde compatibility fot the AtomicMember
+  - fields are serilized without any mutex overhead
 
 ---
 
@@ -21,69 +19,15 @@ Add the crate to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-atomic_struct = { path = "../atomic_struct" }  # or crates.io version when published
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+atomic_struct_core = { version="0.1.1" }  # or crates.io version when published
+
 ```
 
 ## Examples
 
 ```rust
-use atomic_struct::atomic_struct;
-
-#[atomic_struct]
-struct AppState {
-    counter: i32,
-    name: String,
-}
-
-#[tokio::main]
-async fn main() {
-    let state = AppState::new(0, "init".to_string());
-
-    // Async setters
-    state.counter.set(42).await;
-    state.name.set("hello".to_string()).await;
-
-    // Async getters
-    println!("Counter: {}", state.counter.get().await);
-    println!("Name: {}", state.name.get().await);
-
-    // Clone a single field
-    let counter_clone = state.counter.clone();
-    counter_clone.set(99).await;
-    println!("Counter after clone: {}", state.counter.get().await);
-}
-
+let atomic_int = AtomicMember::new(5);
+assert_eq!(atomic_int.get().await, 5);
+atomic_int.set(10).await;
+assert_eq!(atomic_int.get().await, 10);
 ```
-
-## Advanced Usage
-
-### Serde Support
-
-If you add Serde field attributes like `#[serde(rename = "…")]` or `#[serde(skip)]` to the original fields, they will automatically be preserved.
-
-```rust
-#[atomic_struct]
-struct AppState {
-    #[serde(rename = "cnt")]
-    counter: i32,
-    #[serde(skip)]
-    name: String,
-}
-```
-
-### Global Singleton Usage
-
-`atomic_struct` structs can be safely stored in `Arc` or `OnceCell`:
-
-```rust
-use once_cell::sync::OnceCell;
-static GLOBAL_STATE: OnceCell<AppState> = OnceCell::new();
-```
-
-## Benefits
-
-- Thread-safe and async by default
-- Minimal boilerplate
-- Cloneable fields for parallel tasks
-- Automatic getters and setters

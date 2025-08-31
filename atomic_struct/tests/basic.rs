@@ -1,11 +1,9 @@
 use atomic_struct::atomic_struct;
 
 #[atomic_struct]
-#[derive(Debug, Clone, Default)]
 pub struct AppState {
-    /// Ein Zähler
+    /// a public counter
     pub counter: i32,
-    /// Ein Name
     pub(crate) name: String,
 } 
 
@@ -15,8 +13,6 @@ async fn main() {
 
     state.set_counter(42).await;
     state.set_name("hallo".to_string()).await;
-
-    dbg!("State: {:?}", &state);
     println!("Counter: {}", state.get_counter().await);
     println!("Name: {}", state.get_name().await);
 }

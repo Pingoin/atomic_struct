@@ -26,18 +26,18 @@ pub fn atomic_struct(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 .filter(|attr| attr.path().is_ident("doc"))
                 .collect();
 
-            // neues Feld mit Arc<Mutex>
+            // Field as AtomicMember
             atomic_fields.push(quote! {
                 #(#attrs)*
                 #fname: atomic_struct_core::AtomicMember<#fty>
             });
 
-            // Konstruktor-Parameter
+            // Construktor-Parameter
             constructor_params.push(quote! {
                 #fname: #fty
             });
 
-            // Konstruktor-Init
+            // Construktor-Init
             constructor_inits.push(quote! {
                 #fname: atomic_struct_core::AtomicMember::new(#fname)
             });
@@ -62,6 +62,8 @@ pub fn atomic_struct(_attr: TokenStream, item: TokenStream) -> TokenStream {
         }
     }
 
+
+    // create the expanded struct with atomic fields and methods
     let expanded = quote! {
         #(#struct_attrs)*
         #struct_vis struct #struct_name {
