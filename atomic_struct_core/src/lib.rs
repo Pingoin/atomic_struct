@@ -54,8 +54,10 @@ where T: serde::Serialize + Clone
     where
         S: serde::Serializer,
     {
-        let val = self.0.blocking_lock();
-        val.serialize(serializer)
+        tokio::task::block_in_place(|| {
+            let val = self.0.blocking_lock();
+            val.serialize(serializer)
+        }
     }
 }
 
