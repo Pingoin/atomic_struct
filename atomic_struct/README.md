@@ -70,6 +70,8 @@ impl AppState {
 
 how to use:
 
+For serde enshure the use of tokio MultiThread flavor.
+
 ```rust
 use atomic_struct::atomic_struct;
 

@@ -13,6 +13,7 @@ pub fn atomic_struct(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut getters_setters = Vec::new();
     let mut constructor_params = Vec::new();
     let mut constructor_inits = Vec::new();
+    let mut field_copys = Vec::new();
 
     if let Fields::Named(fields) = &input.fields {
         for field in &fields.named {
@@ -59,6 +60,11 @@ pub fn atomic_struct(_attr: TokenStream, item: TokenStream) -> TokenStream {
                     self.#fname.set(new_val).await
                 }
             });
+
+            // Copy method
+            field_copys.push(quote! {
+                self.#fname.set(other.#fname.get().await).await;
+            });
         }
     }
 
@@ -75,6 +81,11 @@ pub fn atomic_struct(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 Self {
                     #(#constructor_inits),*
                 }
+            }
+            #struct_vis async fn update_self(&self, other:Self) {
+              
+                    #(#field_copys)*
+            
             }
 
             #(#getters_setters)*
