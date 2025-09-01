@@ -1,6 +1,6 @@
 [package]
 name = "atomic_struct"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2024"
 license = "MIT"
 authors = ["Pingoin <pingoin@pingoin.eu>"]
@@ -19,7 +19,7 @@ proc-macro = true
 proc-macro2 = "1"
 syn = { version = "2", features = ["full"] }
 quote = "1"
-atomic_struct_core = { version= "0.1.3",path = "../atomic_struct_core" }  # Core-Crate
+atomic_struct_core = { version= "0.1.4",path = "../atomic_struct_core" }  # Core-Crate
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
