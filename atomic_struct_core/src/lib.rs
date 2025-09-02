@@ -27,6 +27,11 @@ where T: Default{
     }
 }
 
+impl Into<T> for AtomicMember<T> {
+    fn into(self) -> T {
+        tokio::task::block_in_place(|| self.0.blocking_lock())
+    }
+}
 
 impl<T> AtomicMember<T> 
 where T: Clone
