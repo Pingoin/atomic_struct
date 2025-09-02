@@ -19,8 +19,8 @@ Add the crate to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-atomic_struct = { version="0.1.3" }
-atomic_struct_core = { version="0.1.3" }
+atomic_struct = { version="0.1.5" }
+atomic_struct_core = { version="0.1.5" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 ```
 

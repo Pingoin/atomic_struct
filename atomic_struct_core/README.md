@@ -19,7 +19,7 @@ Add the crate to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-atomic_struct_core = { version="0.1.3" }  # or crates.io version when published
+atomic_struct_core = { version="0.1.5" }  # or crates.io version when published
 
 ```
 
