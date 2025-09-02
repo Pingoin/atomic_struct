@@ -27,12 +27,6 @@ where T: Default{
     }
 }
 
-impl Into<T> for AtomicMember<T> {
-    fn into(self) -> T {
-        tokio::task::block_in_place(|| self.0.blocking_lock())
-    }
-}
-
 impl<T> AtomicMember<T> 
 where T: Clone
 {
@@ -48,7 +42,17 @@ where T: Clone
         let mut val = self.0.lock().await;
         *val = new_val;
     }
-    
+
+    pub fn get_sync(&self) -> T {
+        tokio::task::block_in_place(|| self.0.blocking_lock()).clone()
+    } 
+
+    pub fn set_sync(&self, val:T){
+        tokio::task::block_in_place(||{ 
+            let mut guard=self.0.blocking_lock();
+            *guard=val;
+        });
+    }
 }
 
 #[cfg(feature = "serde")]
